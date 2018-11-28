@@ -7,7 +7,11 @@ import android.util.Log;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
+import jxl.Cell;
+import jxl.NumberCell;
 import jxl.Sheet;
 import jxl.Workbook;
 import jxl.read.biff.BiffException;
@@ -20,6 +24,10 @@ public class MainActivity extends AppCompatActivity {
     //클래스 노드 객체 생성
     ArrayList<ClassNode> c = new ArrayList<ClassNode>();
 
+    //hashMap
+    Map<String,Map<String,Double>> cityMap = new HashMap<>();
+    String prevKeyName = null;
+
     int classTime;
     int destination;
 
@@ -29,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         fillClassNode();
+        fillHashMap();
 
     }
 
@@ -121,6 +130,51 @@ public class MainActivity extends AppCompatActivity {
             }
 
         } catch(IOException e){
+            e.printStackTrace();
+        } catch (BiffException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void fillHashMap(){
+        try {
+            Log.i("DataSet","DataSet호출 try시작");
+            InputStream is = getApplicationContext().getResources().getAssets().open("test.xls");
+            Workbook wb = Workbook.getWorkbook(is);
+            Log.d("wb",wb.toString());
+            if(wb != null){
+                Sheet sheet  = wb.getSheet(0); //시트 불러오기 지4, 7 층 데이터
+                if(sheet != null) {
+                    int colTotal = sheet.getColumns();
+                    int rowindexStart = 1;  //row인덱스 시작
+                    int rowTotal = sheet.getRows();
+                    Log.i("rowTotal",String.valueOf(rowTotal));
+                    Log.i("DataSet", "DataSet호출 if문시작");
+                    StringBuilder sb;
+                    for (int row = rowindexStart; row < rowTotal; row++) {
+                        String srcNode = sheet.getCell(0, row).getContents();
+                        String destNode = sheet.getCell(1, row).getContents();
+                        //String tmpWeight = sheet.getCell(2, row).getContents();
+                        Cell temp = sheet.getCell(2, row);
+                        NumberCell nc = (NumberCell) temp;
+                        double numberTemp = nc.getValue();
+                        //  int weight = Integer.parseInt(tmpWeight);
+
+                        if (prevKeyName != null && prevKeyName.equals(srcNode)) {
+                            cityMap.get(srcNode).put(destNode, numberTemp);
+                        } else {
+                            cityMap.put(srcNode, new HashMap<String, Double>());
+                            cityMap.get(srcNode).put(destNode, numberTemp);
+                        }
+                        prevKeyName = srcNode;
+                    }
+                }
+            }
+            Log.i("DataSet","값 입력 완료");
+            Log.i("Map값",cityMap.get("A").get("G").toString());
+            Log.i("Map값전체",cityMap.values().toString());
+
+        } catch (IOException e) {
             e.printStackTrace();
         } catch (BiffException e) {
             e.printStackTrace();
