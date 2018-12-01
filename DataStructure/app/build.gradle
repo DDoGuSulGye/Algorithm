@@ -4,11 +4,15 @@ android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.example.leey.datastructure"
-        minSdkVersion 21
+        minSdkVersion 24
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    compileOptions{
+        targetCompatibility 1.8
+        sourceCompatibility 1.8
     }
     buildTypes {
         release {

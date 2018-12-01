@@ -14,10 +14,4 @@ import jxl.read.biff.BiffException;
 
 public class DataSet extends AppCompatActivity {
 
-    public void GetExcelData() {
-
-        Log.i("DataSet", "DataSet호출1");
-
-
-    }
 }
