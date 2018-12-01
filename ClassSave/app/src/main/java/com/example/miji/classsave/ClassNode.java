@@ -12,7 +12,12 @@ public class ClassNode implements Serializable {
     ArrayList<Integer> thursday  = new ArrayList<>();
     ArrayList<Integer> friday  = new ArrayList<>();
     String nearbyElevator;
-    String stair;
+    String nearbyStair;
+    String floor;
+
+    public String getNearbyStair() { return nearbyStair; }
+
+    public void setNearbyStair(String nearbyStair) { this.nearbyStair = nearbyStair; }
 
     public String getClassName(){
         return ClassName;
@@ -42,8 +47,8 @@ public class ClassNode implements Serializable {
         return nearbyElevator;
     }
 
-    public String getStair() {
-        return stair;
+    public String getFloor() {
+        return floor;
     }
 
 
@@ -77,8 +82,8 @@ public class ClassNode implements Serializable {
         this.nearbyElevator = nearbyElevator;
     }
 
-    public void setStair(String stair){
-        this.stair = stair;
+    public void setFloor(String floor){
+        this.floor = floor;
     }
 
 }
