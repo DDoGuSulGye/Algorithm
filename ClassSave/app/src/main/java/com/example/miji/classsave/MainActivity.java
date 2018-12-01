@@ -33,12 +33,13 @@ public class MainActivity extends AppCompatActivity {
     Map<String,Map<String,Double>> cityMap = new HashMap<>();
     String prevKeyName = null;
 
-    int classTime;
-    String destination;
-    int destinationIndex; //몇번째 index에 해당강의실 정보가 있는지 저장
-    int destinationStair;
+    int classTime; //몇교시인지
+    String destination; //해당강의실의 이름 ex 727
+    int destinationIndex; //몇번째 클래스배열의 index에 해당강의실 정보가 있는지 저장
+    int destinationStair; // 목적지의 계단
     int nearPeople=0; // 같은 구역에 있는 사람 수
-    String destinationNearbyElevator;
+    String destinationNearbyElevator; // 목적지 구역 Ex )A B C D E
+    String whatDay; // 무슨요일인지 mon, tue, wed, thr, fri 중에서만 입력가능
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,41 +48,11 @@ public class MainActivity extends AppCompatActivity {
 
         fillClassNode();
         fillHashMap();
-        classTime = 5; // 해당교시
-        destination="727"; //해당강의실
-
+        classTime = 9; // 해당교시
+        destination="420"; //해당강의실
+        whatDay="wed";
+        countDestinationArea(classTime, destination, whatDay);
         //해당 강의실이 몇번째 인덱스에 존재하는지 찾기위해서
-        for(int i =0;i<c.size();i++){
-            if (destination.equals(c.get(i).getClassName()))  {
-                destinationIndex = i;
-            }
-        }
-        destinationNearbyElevator = c.get(destinationIndex).getNearbyElevator(); //그 강의실의 해당구역
-
-        //같은층, 같은구역에 있는 강의실들의 인덱스를 조사하기 위해서
-        for(int i =0;i<c.size();i++){
-            if (c.get(destinationIndex).getStair().equals(c.get(i).getStair()))  { //층수가 같은 것들 중에서
-                if(c.get(destinationIndex).getNearbyElevator().equals(c.get(i).getNearbyElevator())){ //구역이같은곳
-                    forSameElevatorIndex.add(i);
-
-                }
-            }
-        }
-
-        for(int i=0;i<forSameElevatorIndex.size();i++){
-            int temp = forSameElevatorIndex.get(i); //같은 구역의 강의실 인덱스를 데려옴
-            ArrayList<Integer> tempFri = new ArrayList<>();
-            tempFri=c.get(temp).getFriday(); //그 인덱스의 금요일 시간표를 tempFri에 접근
-///////////인덱스 저장된것까진 확인했는데 금요일 배열이 안불려져와서 접근이 불가능함!!!
-
-            Log.d("fri", tempFri.toString());
-//          nearPeople += tempFri.get(classTime-1); // 지정해둔 classTime의 인원을 nearPeople(전체 명수)에 더함
-
-        }
-        String nn = Integer.toString(nearPeople);
-        Log.d("근처", nn);
-
-
 
     }
 
@@ -105,14 +76,14 @@ public class MainActivity extends AppCompatActivity {
 
                         ClassNode classnode = new ClassNode();
                         classnode.setClassName(temp.get(0));
-
+                        //c.get(c.size()).setClassName(temp.get(0));
+                        //Log.d("className",  c.get(c.size()).getClassName());
                         for(int i=0;i<9;i++) {
                             if(temp.get(1+i) != "") {
                                 result.add(Integer.parseInt(temp.get(1+i)));
                             } else {
                                 result.add(0);
                             }
-
                         }
                         classnode.setMonday(result);
                         result.clear();
@@ -155,13 +126,12 @@ public class MainActivity extends AppCompatActivity {
                             }
                         }
                         classnode.setFriday(result);
+
                         result.clear();
+
                         classnode.setNearbyElevator(temp.get(46));
                         classnode.setStair(temp.get(47));
-
                         c.add(classnode);
-                        Log.d("Check",c.get(row-1).getClassName());
-
                         temp.clear();
 
                     }
@@ -219,6 +189,62 @@ public class MainActivity extends AppCompatActivity {
         } catch (BiffException e) {
             e.printStackTrace();
         }
+    }
+
+    public int countDestinationArea(int classTime, String destination, String whatDay){
+
+        for(int i =0;i<c.size();i++){
+            if (destination.equals(c.get(i).getClassName()))  {
+                destinationIndex = i;
+            }
+        }
+        destinationNearbyElevator = c.get(destinationIndex).getNearbyElevator(); //그 강의실의 해당구역
+
+        //같은층, 같은구역에 있는 강의실들의 인덱스를 조사하기 위해서
+        for(int i =0;i<c.size();i++){
+            if (c.get(destinationIndex).getStair().equals(c.get(i).getStair()))  { //층수가 같은 것들 중에서
+                if(c.get(destinationIndex).getNearbyElevator().equals(c.get(i).getNearbyElevator())){ //구역이같은곳
+                    forSameElevatorIndex.add(i);
+                }
+            }
+        }
+        switch(whatDay) {
+            case "mon" :
+                for (int i = 0; i < forSameElevatorIndex.size(); i++) {
+                    int tempIndex = forSameElevatorIndex.get(i); //같은 구역의 강의실 인덱스를 데려옴
+                    ArrayList<Integer> temp = new ArrayList<>(c.get(tempIndex).getMonday());
+                    nearPeople += temp.get(classTime - 1); // 지정해둔 classTime의 인원을 nearPeople(전체 명수)에 더함
+                }break;
+            case "tue" :
+                for (int i = 0; i < forSameElevatorIndex.size(); i++) {
+                    int tempIndex = forSameElevatorIndex.get(i); //같은 구역의 강의실 인덱스를 데려옴
+                    ArrayList<Integer> temp = new ArrayList<>(c.get(tempIndex).getTuesday());
+                    nearPeople += temp.get(classTime - 1); // 지정해둔 classTime의 인원을 nearPeople(전체 명수)에 더함
+                }break;
+            case "wed" :
+                for (int i = 0; i < forSameElevatorIndex.size(); i++) {
+                    int tempIndex = forSameElevatorIndex.get(i); //같은 구역의 강의실 인덱스를 데려옴
+                    ArrayList<Integer> temp = new ArrayList<>(c.get(tempIndex).getWednesday());
+                    nearPeople += temp.get(classTime - 1); // 지정해둔 classTime의 인원을 nearPeople(전체 명수)에 더함
+                }break;
+            case "thr" :
+                for (int i = 0; i < forSameElevatorIndex.size(); i++) {
+                    int tempIndex = forSameElevatorIndex.get(i); //같은 구역의 강의실 인덱스를 데려옴
+                    ArrayList<Integer> temp = new ArrayList<>(c.get(tempIndex).getThursday());
+                    nearPeople += temp.get(classTime - 1); // 지정해둔 classTime의 인원을 nearPeople(전체 명수)에 더함
+                }break;
+            case "fri" :
+                for (int i = 0; i < forSameElevatorIndex.size(); i++) {
+                    int tempIndex = forSameElevatorIndex.get(i); //같은 구역의 강의실 인덱스를 데려옴
+                    ArrayList<Integer> temp = new ArrayList<>(c.get(tempIndex).getFriday());
+                    nearPeople += temp.get(classTime - 1); // 지정해둔 classTime의 인원을 nearPeople(전체 명수)에 더함
+                }break;
+
+        }
+        String nn = Integer.toString(nearPeople);
+        Log.d("근처", nn);
+
+        return nearPeople;
     }
 
 //    int dijkstra(String startNode, String endNode, HashMap<String, HashMap<String, Integer>> wholeGraph) {
