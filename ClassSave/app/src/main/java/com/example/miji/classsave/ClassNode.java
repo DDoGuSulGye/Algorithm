@@ -4,32 +4,15 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 public class ClassNode implements Serializable {
+
     String ClassName;
     ArrayList<Integer> monday;
     ArrayList<Integer> tuesday;
     ArrayList<Integer> wednesday ;
     ArrayList<Integer> thursday ;
     ArrayList<Integer> friday ;
-
-//    ArrayList<Integer> monday = new ArrayList<Integer>();
-//    ArrayList<Integer> tuesday = new ArrayList<Integer>();
-//    ArrayList<Integer> wednesday = new ArrayList<Integer>();
-//    ArrayList<Integer> thursday = new ArrayList<Integer>();
-//    ArrayList<Integer> friday = new ArrayList<Integer>();
-
     String nearbyElevator;
-
-    public void ClassNode(){
-        ClassName = "";
-        //       monday = new ArrayList<Integer>();
-//        tuesday = new ArrayList<Integer>();
-//        tuesday.clear();
-//        wednesday.clear();
-//        thursday.clear();
-//        friday.clear();
-
-        nearbyElevator = "";
-    }
+    String stair;
 
     public String getClassName(){
         return ClassName;
@@ -59,6 +42,12 @@ public class ClassNode implements Serializable {
         return nearbyElevator;
     }
 
+    public String getStair() {
+        return stair;
+    }
+
+
+
     public void setClassName(String ClassName){
         this.ClassName = ClassName;
     }
@@ -85,6 +74,10 @@ public class ClassNode implements Serializable {
 
     public void setNearbyElevator(String nearbyElevator){
         this.nearbyElevator = nearbyElevator;
+    }
+
+    public void setStair(String stair){
+        this.stair = stair;
     }
 
 }
