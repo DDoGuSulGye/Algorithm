@@ -299,6 +299,25 @@ public class MainActivity extends AppCompatActivity {
         return nearPeopleStair;
     }
 
+    public StairNode setStairNode(String area, String whatDay, int lowest, int highest){
+        StairNode node = new StairNode(area, whatDay, lowest, highest);
+        switch(area) {
+            case "D" :
+                node.setTimeByStair(0);
+                break;
+            case "E" :
+                node.setTimeByStair(1);
+                break;
+            case "F" :
+                node.setTimeByStair(2);
+                break;
+            case "G" :
+                node.setTimeByStair(3);
+                break;
+        }
+
+        return node;
+    }
     public ElevatorNode setElevatorNode(String area, String whatDay, int lowest, int highest, int myFloor){
         ElevatorNode node = new ElevatorNode(area, whatDay, lowest, highest);
         int totalPeople = 0;
